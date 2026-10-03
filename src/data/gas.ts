@@ -63,7 +63,8 @@ export const endereco = {
   geo: { latitude: -18.9540625, longitude: -48.2393125 },
 } as const;
 
-export const enderecoLinha1 = `${endereco.rua}, ${endereco.numero}`;
+// espaço inseparável: o número nunca fica sozinho na linha de baixo
+export const enderecoLinha1 = `${endereco.rua},\u00A0${endereco.numero}`;
 export const enderecoCompleto = `${endereco.rua}, ${endereco.numero} — ${endereco.bairro}, ${endereco.cidade}/${endereco.uf}, CEP ${endereco.cep}`;
 const enderecoBusca = `${endereco.rua}, ${endereco.numero}, ${endereco.bairro}, ${endereco.cidade} - ${endereco.uf}, ${endereco.cep}`;
 export const mapaEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(enderecoBusca)}&z=16&output=embed`;
@@ -132,6 +133,10 @@ export const horariosTexto = {
   microlinha: "Seg a sáb, 7h30 às 21h · Dom, 8h às 19h",
   semana: "Segunda a sábado, das 7h30 às 21h",
   domingo: "Domingo, das 8h às 19h",
+  tabela: [
+    ["Seg a sáb", "7h30 às 21h"],
+    ["Domingo", "8h às 19h"],
+  ],
   feriadosConfirmado: false,
 } as const;
 
@@ -182,9 +187,9 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://atendegasu
  * Com baixa resolução (< 560 px) o site nunca exibe o mascote acima de 160 px.
  */
 export const mascote = {
-  png: "/brand/mascote.png",
-  webp: "/brand/mascote.webp",
-  avif: "/brand/mascote.avif",
+  png: "brand/mascote.png",
+  webp: "brand/mascote.webp",
+  avif: "brand/mascote.avif",
   largura: mascoteGerado.largura,
   altura: mascoteGerado.altura,
   altaResolucao: mascoteGerado.largura >= 560,

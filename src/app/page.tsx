@@ -104,7 +104,7 @@ export default function Pagina() {
           <div className="container-site">
             <Faq />
             <div className="mx-auto mt-10 flex max-w-[860px] flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-6">
-              <BotaoZap mensagem={mensagens.padrao} rotuloAcessivel="Pedir gás no WhatsApp">
+              <BotaoZap mensagem={mensagens.padrao}>
                 Pedir gás no WhatsApp
               </BotaoZap>
               <LinkLigar className="text-marinho" prefixo="ou ligue" />

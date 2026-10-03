@@ -9,7 +9,7 @@ export function Hero() {
   return (
     <section id="topo" aria-labelledby="titulo-hero" className="hero padrao-pontos relative bg-amarelo text-marinho">
       <div
-        className="container-site grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 pb-12 pt-6 [grid-template-areas:'texto_texto'_'ctas_ctas'_'info_mascote'_'chips_chips'] md:pt-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-x-10 lg:py-16 lg:[grid-template-areas:'texto_mascote'_'ctas_mascote'_'info_mascote'_'chips_mascote']"
+        className="container-site grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 pb-12 pt-6 [grid-template-areas:'texto_texto'_'ctas_ctas'_'info_mascote'_'chips_chips'] md:pt-10 md:[grid-template-areas:'texto_mascote'_'ctas_ctas'_'info_info'_'chips_chips'] lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-x-10 lg:py-16 lg:[grid-template-areas:'texto_mascote'_'ctas_mascote'_'info_mascote'_'chips_mascote']"
       >
         <div className="[grid-area:texto]">
           <StatusPlantao />
@@ -26,7 +26,7 @@ export function Hero() {
         </div>
 
         <div className="mt-6 flex flex-col gap-4 [grid-area:ctas] sm:flex-row sm:flex-wrap sm:items-center">
-          <BotaoZap mensagem={mensagens.padrao} tamanho="g" rotuloAcessivel="Pedir gás no WhatsApp">
+          <BotaoZap mensagem={mensagens.padrao} tamanho="g">
             {hero.ctaZap}
           </BotaoZap>
           <BotaoLigar tamanho="g">{hero.ctaLigar}</BotaoLigar>
@@ -67,11 +67,11 @@ export function Hero() {
           </ul>
         </div>
 
-        <div className="mt-7 self-center [grid-area:mascote] lg:mt-0 lg:self-center lg:justify-self-center">
-          <div className="mascote-palco h-[120px] w-[120px] lg:h-[280px] lg:w-[280px]">
+        <div className="mt-7 self-center [grid-area:mascote] md:mt-0 md:pr-3 lg:justify-self-center lg:pr-0">
+          <div className="mascote-palco h-[120px] w-[120px] md:h-[220px] md:w-[220px] lg:h-[280px] lg:w-[280px]">
             <div className="relative translate-y-[6%]">
               <div className="mascote-pulinho">
-                <Mascote largura={160} prioridade className="w-[84px] lg:w-[160px]" />
+                <Mascote largura={160} prioridade className="w-[84px] md:w-[130px] lg:w-[160px]" />
               </div>
             </div>
           </div>

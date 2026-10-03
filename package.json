@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:revisao": "NEXT_PUBLIC_MODO_REVISAO=1 next build",
+    "build:revisao": "node scripts/build-revisao.mjs",
     "start": "node scripts/servir.mjs out 4173",
     "imagens": "node scripts/imagens.mjs",
     "og": "node scripts/og.mjs",
     "contraste": "node scripts/contraste.mjs",
     "qa": "node scripts/qa.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "qa:revisao": "node scripts/qa.mjs --pasta out-revisao --revisao",
+    "verificar": "npm run build && npm run qa"
   },
   "dependencies": {
     "next": "^16.3.8",

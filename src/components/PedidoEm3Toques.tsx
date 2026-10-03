@@ -290,22 +290,22 @@ export function PedidoEm3Toques({ children }: { children: ReactNode }) {
           )}
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          {etapa > 0 && (
-            <button type="button" className="btn btn-claro btn-p" onClick={() => irPara((etapa - 1) as Etapa)}>
-              <IconeVoltar />
-              Voltar
-            </button>
-          )}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           {etapa < 2 ? (
-            <button type="submit" className="btn btn-marinho flex-1 sm:flex-none">
+            <button type="submit" className="btn btn-marinho w-full sm:w-auto">
               Continuar
               <IconeSeta />
             </button>
           ) : (
-            <button type="submit" className="btn btn-zap flex-1 sm:flex-none" data-enviar-pedido>
+            <button type="submit" className="btn btn-zap w-full sm:w-auto" data-enviar-pedido>
               <IconeZap />
               {t.botaoFinal}
+            </button>
+          )}
+          {etapa > 0 && (
+            <button type="button" className="btn btn-claro btn-p self-start sm:self-auto" onClick={() => irPara((etapa - 1) as Etapa)}>
+              <IconeVoltar />
+              Voltar
             </button>
           )}
         </div>

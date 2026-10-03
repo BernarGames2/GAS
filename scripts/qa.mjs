@@ -27,7 +27,7 @@ const PASTA = join(raiz, opcao("--pasta", "out"));
 const SEM_SCREENSHOTS = args.includes("--sem-screenshots");
 const PORTA = 4317;
 const BASE = `http://127.0.0.1:${PORTA}/`;
-const SAIDA = join(raiz, "qa");
+const SAIDA = args.includes("--revisao") ? join(raiz, "qa", "revisao") : join(raiz, "qa");
 
 const fonteGas = readFileSync(join(raiz, "src/data/gas.ts"), "utf8");
 const WHATSAPP_NUMBER = fonteGas.match(/WHATSAPP_NUMBER = "(\d+)"/)[1];
@@ -119,14 +119,56 @@ if (!SEM_SCREENSHOTS) {
       const alvo = pagina.locator(seletor).first();
       await alvo.scrollIntoViewIfNeeded();
       await pagina.waitForTimeout(650); // fade-up das seções
-      // a barra fixa do celular cobre o fim da seção; some só para a foto da seção
-      await pagina.evaluate(() => document.querySelector('nav[aria-label="Pedir gás"]')?.style.setProperty("visibility", "hidden"));
+      // header fixo e barra do celular cobrem partes da seção; somem só para a foto da seção
+      const fixos = nome === "01-header" ? 'nav[aria-label="Pedir gás"]' : 'header, nav[aria-label="Pedir gás"]';
+      await pagina.evaluate((sel) => document.querySelectorAll(sel).forEach((e) => e.style.setProperty("visibility", "hidden")), fixos);
       await alvo.screenshot({ path: join(dir, `${nome}.png`) });
-      await pagina.evaluate(() => document.querySelector('nav[aria-label="Pedir gás"]')?.style.removeProperty("visibility"));
+      await pagina.evaluate((sel) => document.querySelectorAll(sel).forEach((e) => e.style.removeProperty("visibility")), fixos);
     }
-    await pagina.evaluate(() => document.querySelectorAll("[data-revelar]").forEach((e) => e.classList.add("revelado")));
+    await pagina.evaluate(() => {
+      document.querySelectorAll("[data-revelar]").forEach((e) => e.classList.add("revelado"));
+      window.scrollTo(0, 0);
+    });
     await pagina.waitForTimeout(600);
     await pagina.screenshot({ path: join(dir, "99-pagina-inteira.png"), fullPage: true });
+    await contexto.close();
+  }
+  // Estados interativos (para a revisão visual): selo aberto, termômetro acabando, erros e etapa 3 do pedido
+  for (const [w, h] of [
+    [390, 844],
+    [1440, 900],
+  ]) {
+    const dir = join(SAIDA, "screens", "estados", `${w}x${h}`);
+    await mkdir(dir, { recursive: true });
+    const { contexto, pagina } = await novaPagina({ viewport: { width: w, height: h } }, { stubAbrir: true });
+    await pagina.clock.setFixedTime(new Date("2026-10-05T12:00:00-03:00"));
+    await pagina.goto(BASE, { waitUntil: "networkidle" });
+    await pagina.evaluate(() => document.querySelectorAll("[data-revelar]").forEach((e) => e.classList.add("revelado")));
+    await pagina.waitForSelector('[data-status="aberto"]');
+    await pagina.screenshot({ path: join(dir, "a-selo-aberto.png") });
+    await pagina.evaluate(() => document.querySelectorAll('header, nav[aria-label="Pedir gás"]').forEach((e) => e.style.setProperty("visibility", "hidden")));
+    await pagina.getByRole("button", { name: "ACABANDO", exact: true }).click();
+    await pagina.waitForTimeout(700);
+    await pagina.locator("#nivel").screenshot({ path: join(dir, "b-termometro-acabando.png") });
+    await pagina.getByRole("button", { name: "CHEIO", exact: true }).click();
+    await pagina.waitForTimeout(500);
+    await pagina.locator("#nivel").screenshot({ path: join(dir, "c-termometro-cheio.png") });
+    const card = pagina.locator("[data-pedido]");
+    await card.getByRole("button", { name: /continuar/i }).click();
+    await card.getByRole("button", { name: /continuar/i }).click();
+    await pagina.waitForTimeout(300);
+    await pagina.locator("#pedido").screenshot({ path: join(dir, "d-pedido-erros.png") });
+    await pagina.locator("#pedido-bairro").fill("Laranjeiras");
+    await pagina.locator("#pedido-rua").fill("Rua das Acácias, 100");
+    await card.getByRole("button", { name: /continuar/i }).click();
+    await pagina.locator("#pedido-pagamento").selectOption("Pix");
+    await pagina.waitForTimeout(300);
+    await pagina.locator("#pedido").screenshot({ path: join(dir, "e-pedido-etapa-3.png") });
+    await pagina.locator("[data-enviar-empresa]").click();
+    await pagina.locator("#empresas").screenshot({ path: join(dir, "f-empresas-erro.png") });
+    await pagina.locator("[data-ver-mapa]").click();
+    await pagina.waitForTimeout(300);
+    await pagina.locator("footer").screenshot({ path: join(dir, "g-rodape-mapa.png") });
     await contexto.close();
   }
   registrar("A", "screenshots 1440×900, 768×1024, 390×844 de cada seção", true, "qa/screens/");
@@ -506,6 +548,18 @@ await checar("A", "prefers-reduced-motion desliga pulso, pulinho e transição d
     );
     if (pequenos.length) throw new Error(pequenos.map((p) => `${p.t} (${Math.round(p.h)}px)`).join("; "));
   });
+  await checar("A11y", "aria-label contém o texto visível (WCAG 2.5.3)", async () => {
+    const ruins = await pagina.$$eval("a[aria-label], button[aria-label]", (els) =>
+      els
+        .map((e) => {
+          const norm = (t) => t.toLowerCase().replace(/\s+/g, " ").trim();
+          const visivel = norm(e.innerText || "");
+          return { visivel, rotulo: norm(e.getAttribute("aria-label")) };
+        })
+        .filter((e) => e.visivel && !e.rotulo.includes(e.visivel)),
+    );
+    if (ruins.length) throw new Error(ruins.map((r) => `“${r.visivel}” ≠ “${r.rotulo}”`).join("; "));
+  });
   await checar("A11y", "foco visível de 3 px", async () => {
     await pagina.keyboard.press("Tab");
     await pagina.keyboard.press("Tab");
@@ -636,5 +690,5 @@ const linhas = [
 ];
 await mkdir(SAIDA, { recursive: true });
 await writeFile(join(SAIDA, "relatorio.md"), linhas.join("\n") + "\n");
-console.log(`\n${resultados.length - falhas.length}/${resultados.length} ok — relatório em qa/relatorio.md`);
+console.log(`\n${resultados.length - falhas.length}/${resultados.length} ok — relatório em ${join(SAIDA, "relatorio.md").replace(raiz, "")}`);
 process.exit(falhas.length ? 1 : 0);

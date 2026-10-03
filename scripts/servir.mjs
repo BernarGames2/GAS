@@ -1,9 +1,11 @@
-// Servidor estático mínimo para a pasta out/ (sem dependências).
+// Servidor estático mínimo para a pasta out/ (sem dependências), com gzip e cache
+// como numa hospedagem real (Vercel, Netlify, Cloudflare Pages…).
 // Uso: node scripts/servir.mjs [pasta=out] [porta=4173]
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { gzipSync } from "node:zlib";
 
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
@@ -30,8 +32,17 @@ export function servir(pasta = "out", porta = 4173) {
       const info = await stat(arquivo).catch(() => null);
       if (info?.isDirectory()) arquivo = join(arquivo, "index.html");
       else if (!info && !extname(arquivo)) arquivo += ".html";
-      const corpo = await readFile(arquivo);
-      res.writeHead(200, { "content-type": TIPOS[extname(arquivo)] ?? "application/octet-stream" });
+      let corpo = await readFile(arquivo);
+      const tipo = TIPOS[extname(arquivo)] ?? "application/octet-stream";
+      const cabecalhos = {
+        "content-type": tipo,
+        "cache-control": caminho.startsWith("/_next/static/") ? "public, max-age=31536000, immutable" : "public, max-age=0, must-revalidate",
+      };
+      if (/text|javascript|json|xml|svg/.test(tipo) && /gzip/.test(req.headers["accept-encoding"] ?? "")) {
+        corpo = gzipSync(corpo);
+        cabecalhos["content-encoding"] = "gzip";
+      }
+      res.writeHead(200, cabecalhos);
       res.end(corpo);
     } catch {
       res.writeHead(404, { "content-type": "text/html; charset=utf-8" });

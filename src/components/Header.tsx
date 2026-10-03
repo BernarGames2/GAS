@@ -24,7 +24,7 @@ export function Header() {
             <IconeTelefone className="h-5 w-5" />
             {telefone.exibicao}
           </a>
-          <BotaoZap mensagem={mensagens.padrao} tamanho="p" rotuloAcessivel="Pedir gás">
+          <BotaoZap mensagem={mensagens.padrao} tamanho="p">
             Pedir gás
           </BotaoZap>
         </div>

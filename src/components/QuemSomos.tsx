@@ -1,5 +1,5 @@
-import { flags, historia, instagram, textos } from "@/data/gas";
-import { IconeInstagram } from "./Icones";
+import { endereco, enderecoLinha1, flags, historia, horariosTexto, instagram, mapaLinkUrl, textos } from "@/data/gas";
+import { IconeInstagram, IconePin, IconeRelogio } from "./Icones";
 
 export function QuemSomos() {
   const t = textos.quemSomos;
@@ -33,6 +33,48 @@ export function QuemSomos() {
         )}
       </div>
 
+      <div className="space-y-6">
+        {/* Cartão de visita: só fatos confirmados (endereço, horário) */}
+        <div className="cartao grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+          <div className="flex items-start gap-3">
+            <span className="grid h-11 w-11 flex-none place-items-center rounded-full bg-amarelo text-marinho" aria-hidden="true">
+              <IconePin className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="font-titulo text-xl font-extrabold uppercase leading-tight text-marinho">Loja em {endereco.bairro}</p>
+              <p className="mt-1">
+                {enderecoLinha1}
+                <br />
+                {endereco.cidade}/{endereco.uf} · CEP {endereco.cep}
+              </p>
+              <a
+                href={mapaLinkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex min-h-12 items-center font-semibold text-azul underline decoration-2 underline-offset-4"
+              >
+                Como chegar
+              </a>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="grid h-11 w-11 flex-none place-items-center rounded-full bg-amarelo text-marinho" aria-hidden="true">
+              <IconeRelogio className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="font-titulo text-xl font-extrabold uppercase leading-tight text-marinho">Atendimento</p>
+              <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3">
+                {horariosTexto.tabela.map(([dias, horas]) => (
+                  <div key={dias} className="contents">
+                    <dt>{dias}</dt>
+                    <dd className="font-semibold">{horas}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </div>
+
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3" aria-label="Fotos da empresa (a confirmar)">
         {t.fotos.map((foto, i) => (
           <li
@@ -50,6 +92,7 @@ export function QuemSomos() {
           </li>
         ))}
       </ul>
+      </div>
     </div>
   );
 }

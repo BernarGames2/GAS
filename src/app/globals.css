@@ -67,9 +67,13 @@
     outline-offset: 3px;
   }
 
-  /* em fundo azul-marinho o anel azul some; usa amarelo */
+  /* em fundo azul-marinho o anel azul some; usa amarelo (mas volta ao azul dentro de cartões claros) */
   .secao-escura :focus-visible {
     outline-color: var(--amarelo);
+  }
+
+  .secao-escura .cartao :focus-visible {
+    outline-color: var(--azul);
   }
 
   [hidden] {
@@ -300,6 +304,14 @@
   min-height: max(640px, calc(100svh - var(--altura-header)));
 }
 
+/* tablet: sobra altura; centraliza o bloco em vez de deixar um vão embaixo */
+@media (min-width: 768px) {
+  .hero {
+    display: grid;
+    align-content: center;
+  }
+}
+
 @media (min-width: 1024px) {
   .hero {
     min-height: 640px;
@@ -372,11 +384,17 @@
   appearance: none;
   -webkit-appearance: none;
   width: 56px;
-  height: 300px;
+  height: 270px;
   margin: 0;
   background: transparent;
   cursor: pointer;
   touch-action: none;
+}
+
+@media (min-width: 480px) {
+  .range-vertical {
+    height: 300px;
+  }
 }
 
 .range-vertical::-webkit-slider-runnable-track {

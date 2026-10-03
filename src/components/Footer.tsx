@@ -38,11 +38,14 @@ export function Footer() {
           <h2 className="flex items-center gap-2 text-xl text-amarelo">
             <IconeRelogio className="h-5 w-5" /> Horários
           </h2>
-          <p className="mt-3 leading-relaxed">
-            {horariosTexto.semana}
-            <br />
-            {horariosTexto.domingo}
-          </p>
+          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 leading-relaxed">
+            {horariosTexto.tabela.map(([dias, horas]) => (
+              <div key={dias} className="contents">
+                <dt>{dias}</dt>
+                <dd className="whitespace-nowrap font-semibold">{horas}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <div>

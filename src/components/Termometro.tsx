@@ -55,7 +55,7 @@ export function Termometro() {
             viewBox="0 0 220 340"
             width="220"
             height="340"
-            className="h-auto w-[200px] flex-none cursor-pointer select-none sm:w-[220px]"
+            className="h-auto w-[180px] flex-none cursor-pointer select-none sm:w-[220px]"
             aria-hidden="true"
             onClick={nivelPeloToque}
             data-botijao
@@ -69,6 +69,10 @@ export function Termometro() {
             <rect x="60" y="8" width="100" height="66" rx="18" fill="var(--amarelo)" stroke="var(--azul-marinho)" strokeWidth="6" />
             <rect x="77" y="20" width="66" height="18" rx="9" fill="var(--azul-marinho)" />
             <rect x="96" y="44" width="28" height="22" rx="4" fill="var(--azul-marinho)" />
+            {/* base (atrás do corpo) */}
+            <rect x="48" y="304" width="124" height="30" rx="6" fill="var(--amarelo)" stroke="var(--azul-marinho)" strokeWidth="5" />
+            <rect x="72" y="315" width="22" height="9" rx="3" fill="var(--azul-marinho)" />
+            <rect x="126" y="315" width="22" height="9" rx="3" fill="var(--azul-marinho)" />
             {/* corpo vazio */}
             <rect x={CORPO.x} y={CORPO.y} width={CORPO.w} height={CORPO.h} rx={CORPO.r} fill="var(--branco)" />
             {/* gás */}
@@ -103,10 +107,6 @@ export function Termometro() {
             <text x="110" y="145" textAnchor="middle" fontFamily="var(--font-titulo)" fontWeight="800" fontSize="30" fill="var(--azul-marinho)">
               GLP
             </text>
-            {/* base */}
-            <rect x="46" y="300" width="128" height="34" rx="6" fill="var(--azul-marinho)" />
-            <rect x="70" y="314" width="22" height="10" rx="3" fill="var(--papel)" />
-            <rect x="128" y="314" width="22" height="10" rx="3" fill="var(--papel)" />
           </svg>
 
           <div className="flex flex-col items-center">
@@ -142,6 +142,7 @@ export function Termometro() {
             </button>
           ))}
         </div>
+        <ReguaFases estado={estado} className="mt-4 lg:hidden" />
         <p className="mt-4 text-center text-pequeno text-grafite">{t.aviso}</p>
       </div>
 
@@ -168,13 +169,13 @@ export function Termometro() {
                 </BotaoZap>
               )}
               {estado === "metade" && (
-                <BotaoZap mensagem={mensagemDoEstado.metade} rotuloAcessivel="Pedir agora">
+                <BotaoZap mensagem={mensagemDoEstado.metade}>
                   {info.cta}
                 </BotaoZap>
               )}
               {estado === "acabando" && (
                 <span key="pulso" className="cta-pulsa-1x inline-flex">
-                  <BotaoZap mensagem={mensagemDoEstado.acabando} tamanho="g" rotuloAcessivel="Pedir agora">
+                  <BotaoZap mensagem={mensagemDoEstado.acabando} tamanho="g">
                     {info.cta}
                   </BotaoZap>
                 </span>
@@ -184,22 +185,7 @@ export function Termometro() {
           </div>
         </div>
 
-        {/* Régua das fases (mesmos limites do painel) */}
-        <ol className="grid grid-cols-3 overflow-hidden rounded-[10px] border-2 border-marinho bg-white" aria-label="Fases do botijão">
-          {FASES.map((f, i) => {
-            const atual = f.id === estado;
-            return (
-              <li
-                key={f.id}
-                aria-current={atual ? "step" : undefined}
-                className={`px-2 py-3 text-center sm:px-3 ${i > 0 ? "border-l-2 border-marinho" : ""} ${atual ? "bg-marinho text-amarelo" : "text-marinho"}`}
-              >
-                <span className="block font-titulo text-[1.05rem] font-extrabold uppercase leading-tight sm:text-xl">{f.titulo}</span>
-                <span className={`mt-0.5 block text-pequeno font-semibold ${atual ? "text-white" : "text-grafite"}`}>{f.faixa}</span>
-              </li>
-            );
-          })}
-        </ol>
+        <ReguaFases estado={estado} className="hidden lg:grid" />
 
         {mostrarAguaMorna && (
           <aside className="rounded-cartao border-2 border-dashed border-marinho bg-white p-5" aria-labelledby="agua-morna">
@@ -212,5 +198,26 @@ export function Termometro() {
         )}
       </div>
     </div>
+  );
+}
+
+/** Régua das fases (mesmos limites do painel). */
+function ReguaFases({ estado, className = "" }: { estado: Estado; className?: string }) {
+  return (
+    <ol className={`grid grid-cols-3 overflow-hidden rounded-[10px] border-2 border-marinho bg-white ${className}`} aria-label="Fases do botijão">
+      {FASES.map((f, i) => {
+        const atual = f.id === estado;
+        return (
+          <li
+            key={f.id}
+            aria-current={atual ? "step" : undefined}
+            className={`px-2 py-3 text-center sm:px-3 ${i > 0 ? "border-l-2 border-marinho" : ""} ${atual ? "bg-marinho text-amarelo" : "text-marinho"}`}
+          >
+            <span className="block font-titulo text-[1.05rem] font-extrabold uppercase leading-tight sm:text-xl">{f.titulo}</span>
+            <span className={`mt-0.5 block text-pequeno font-semibold ${atual ? "text-white" : "text-grafite"}`}>{f.faixa}</span>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
