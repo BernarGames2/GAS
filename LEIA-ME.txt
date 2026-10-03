@@ -1,0 +1,19 @@
+SITE ATENDE GÁS URGENTE — pasta pronta para publicar (site estático, sem build)
+=============================================================================
+COMO PUBLICAR NA VERCEL
+  1) Suba esta pasta inteira (index.html + assets/ + arquivos da raiz) no repositório do projeto, ou arraste a pasta no painel da Vercel.
+  2) Framework: "Other". Sem comando de build. Diretório de saída: a própria pasta (raiz).
+
+O QUE CONFIRMAR COM O CLIENTE (nada disso foi inventado; está marcado aqui)
+  - WHATSAPP: em assets/app.js, CFG.whatsapp está com 5534999089902 (número que aparece num post do Facebook da empresa). (34) 3216-3140 é fixo e é usado só para ligar. CONFIRMAR qual número recebe os pedidos.
+  - "Desde 1992": vem do Facebook oficial da empresa ("fundada em 1992"). Confirmar ou remover em index.html (seção "Gás de bairro").
+  - Tamanhos P13 e P45 no pedido: vieram de um diretório de terceiros. A bio do Instagram diz "todos os tamanhos e modelos". Confirmar os tamanhos que vendem.
+  - Horários: Google Maps (seg a sáb 7h30–21h; dom 8h–19h). Confirmar feriados.
+  - Formas de pagamento, prazo e bairros atendidos: o site NÃO afirma nada; a resposta é "o atendente confirma".
+  - Texto de segurança com gás (seção vermelha): revisão do cliente antes de divulgar.
+  - Relação com a marca "Gás Urgente" (gasurgente.com.br, app, Av. João Pessoa 1163) é desconhecida: o site não cita essa marca.
+  - Domínio: depois de definir, ajuste og:image para URL absoluta e adicione <link rel="canonical"> no index.html.
+  - Mascote: está em baixa resolução (recorte da foto de perfil). Pedir o arquivo original (PNG transparente ou vetor) e trocar assets/mascote.webp, favicon.png, apple-touch-icon.png e og.png.
+  - Fotos reais da loja/equipe/frota: ainda não há. Quando chegarem, dá para adicionar uma galeria na seção "Gás de bairro".
+
+NÃO HÁ: preços, prazos de entrega, avaliações do Google, depoimentos, selos ou certificações.
